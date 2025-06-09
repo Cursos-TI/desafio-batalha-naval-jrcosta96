@@ -163,3 +163,128 @@ int main() {
 
     return 0;
 }
+#include <stdio.h>
+
+#define TAM_TABULEIRO 10
+#define TAM_HABILIDADE 5
+
+// Função para inicializar o tabuleiro com água (0)
+void inicializarTabuleiro(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO]) {
+    for (int i = 0; i < TAM_TABULEIRO; i++) {
+        for (int j = 0; j < TAM_TABULEIRO; j++) {
+            tabuleiro[i][j] = 0;
+        }
+    }
+
+    // Exemplo: posicionando alguns navios (valor 3)
+    tabuleiro[2][2] = 3;
+    tabuleiro[2][3] = 3;
+    tabuleiro[5][5] = 3;
+    tabuleiro[6][5] = 3;
+}
+
+// Função para imprimir o tabuleiro
+void imprimirTabuleiro(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO]) {
+    for (int i = 0; i < TAM_TABULEIRO; i++) {
+        for (int j = 0; j < TAM_TABULEIRO; j++) {
+            if (tabuleiro[i][j] == 0) printf("~ ");
+            else if (tabuleiro[i][j] == 3) printf("N ");
+            else if (tabuleiro[i][j] == 5) printf("* ");
+        }
+        printf("\n");
+    }
+}
+
+// Gera matriz Cone (ponta em cima)
+void gerarMatrizCone(int matriz[TAM_HABILIDADE][TAM_HABILIDADE]) {
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (j >= (TAM_HABILIDADE/2 - i) && j <= (TAM_HABILIDADE/2 + i)) {
+                matriz[i][j] = 1;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+}
+
+// Gera matriz Cruz (formato +)
+void gerarMatrizCruz(int matriz[TAM_HABILIDADE][TAM_HABILIDADE]) {
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (i == TAM_HABILIDADE/2 || j == TAM_HABILIDADE/2) {
+                matriz[i][j] = 1;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+}
+
+// Gera matriz Octaedro (losango)
+void gerarMatrizOctaedro(int matriz[TAM_HABILIDADE][TAM_HABILIDADE]) {
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (abs(i - TAM_HABILIDADE/2) + abs(j - TAM_HABILIDADE/2) <= TAM_HABILIDADE/2) {
+                matriz[i][j] = 1;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+}
+
+// Sobrepõe uma matriz de habilidade no tabuleiro
+void aplicarHabilidade(int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO], int matriz[TAM_HABILIDADE][TAM_HABILIDADE], int origemX, int origemY) {
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            if (matriz[i][j] == 1) {
+                int x = origemX + i - TAM_HABILIDADE/2;
+                int y = origemY + j - TAM_HABILIDADE/2;
+
+                // Verifica se a posição está dentro do tabuleiro
+                if (x >= 0 && x < TAM_TABULEIRO && y >= 0 && y < TAM_TABULEIRO) {
+                    // Só marca como 5 se não for navio (3)
+                    if (tabuleiro[x][y] != 3) {
+                        tabuleiro[x][y] = 5;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Função para imprimir a matriz da habilidade (debug)
+void imprimirMatrizHabilidade(int matriz[TAM_HABILIDADE][TAM_HABILIDADE]) {
+    for (int i = 0; i < TAM_HABILIDADE; i++) {
+        for (int j = 0; j < TAM_HABILIDADE; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+int main() {
+    int tabuleiro[TAM_TABULEIRO][TAM_TABULEIRO];
+    int cone[TAM_HABILIDADE][TAM_HABILIDADE];
+    int cruz[TAM_HABILIDADE][TAM_HABILIDADE];
+    int octaedro[TAM_HABILIDADE][TAM_HABILIDADE];
+
+    inicializarTabuleiro(tabuleiro);
+
+    gerarMatrizCone(cone);
+    gerarMatrizCruz(cruz);
+    gerarMatrizOctaedro(octaedro);
+
+    // Aplicar habilidades no tabuleiro com ponto de origem (linha, coluna)
+    aplicarHabilidade(tabuleiro, cone, 2, 2);       // Cone na posição (2,2)
+    aplicarHabilidade(tabuleiro, cruz, 5, 5);       // Cruz na posição (5,5)
+    aplicarHabilidade(tabuleiro, octaedro, 7, 7);   // Octaedro na posição (7,7)
+
+    // Exibir o tabuleiro final
+    printf("Tabuleiro com habilidades:\n");
+    imprimirTabuleiro(tabuleiro);
+
+    return 0;
+}
