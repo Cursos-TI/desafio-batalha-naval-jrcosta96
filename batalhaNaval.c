@@ -91,3 +91,75 @@ int main() {
     exibirTabuleiro(tabuleiro);
 
     return 0;
+    #include <stdio.h>
+
+#define TAM 10          // Tamanho do tabuleiro
+#define NAVIO 3         // Valor representando parte do navio
+#define AGUA 0          // Valor representando água
+#define TAM_NAVIO 3     // Tamanho fixo dos navios
+
+// Função para verificar se o espaço está livre para o navio
+int pode_colocar(int tabuleiro[TAM][TAM], int linha, int coluna, int dx, int dy) {
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        int x = linha + dx * i;
+        int y = coluna + dy * i;
+
+        // Verifica se está fora do tabuleiro
+        if (x < 0 || x >= TAM || y < 0 || y >= TAM)
+            return 0;
+
+        // Verifica se já tem navio
+        if (tabuleiro[x][y] != AGUA)
+            return 0;
+    }
+    return 1;
+}
+
+// Função para posicionar o navio no tabuleiro
+void colocar_navio(int tabuleiro[TAM][TAM], int linha, int coluna, int dx, int dy) {
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        int x = linha + dx * i;
+        int y = coluna + dy * i;
+        tabuleiro[x][y] = NAVIO;
+    }
+}
+
+// Função para imprimir o tabuleiro no console
+void exibir_tabuleiro(int tabuleiro[TAM][TAM]) {
+    printf("Tabuleiro Batalha Naval:\n\n");
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int tabuleiro[TAM][TAM] = {0}; // Inicializa todas as posições com 0 (água)
+
+    // Posiciona 1 navio horizontal (direita)
+    if (pode_colocar(tabuleiro, 2, 1, 0, 1)) {
+        colocar_navio(tabuleiro, 2, 1, 0, 1);
+    }
+
+    // Posiciona 1 navio vertical (baixo)
+    if (pode_colocar(tabuleiro, 5, 5, 1, 0)) {
+        colocar_navio(tabuleiro, 5, 5, 1, 0);
+    }
+
+    // Posiciona 1 navio diagonal (principal: linha++, coluna++)
+    if (pode_colocar(tabuleiro, 0, 0, 1, 1)) {
+        colocar_navio(tabuleiro, 0, 0, 1, 1);
+    }
+
+    // Posiciona 1 navio diagonal (secundária: linha++, coluna--)
+    if (pode_colocar(tabuleiro, 0, 9, 1, -1)) {
+        colocar_navio(tabuleiro, 0, 9, 1, -1);
+    }
+
+    // Exibe o tabuleiro
+    exibir_tabuleiro(tabuleiro);
+
+    return 0;
+}
